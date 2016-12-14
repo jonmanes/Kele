@@ -16,6 +16,11 @@ class Kele
     @user_data = JSON.parse(self.class.get('/users/me', headers: { "authorization" => @auth_token }).body)
   end
 
+  def get_mentor_availability()
+    mentor_id = @user_data["current_enrollment"]["mentor_id"]
+    @mentor_availability_data = JSON.parse(self.class.get("/mentors/#{mentor_id}/student_availability", body: { id: mentor_id },headers: { "authorization" => @auth_token }).body)
+  end
+
 end
 
 class InvalidError < StandardError
