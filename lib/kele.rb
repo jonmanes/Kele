@@ -23,6 +23,19 @@ class Kele
     @mentor_availability_data = JSON.parse(self.class.get("/mentors/#{mentor_id}/student_availability", body: { id: mentor_id },headers: { "authorization" => @auth_token }).body)
   end
 
+  def get_messages(page = nil)
+    if page == nil
+      total_pages = (JSON.parse(self.class.get("/message_threads", headers: { "authorization" => @auth_token }).body)["count"])/10+1
+      @get_messages = (1..total_pages).map{ |n| JSON.parse(self.class.get("/message_threads", body: { page: n }, headers: { "authorization" => @auth_token }).body) }
+    else
+      @get_messages = JSON.parse(self.class.get("/message_threads", body: { page: page }, headers: { "authorization" => @auth_token }).body)
+    end
+  end
+
+  def create_message(recipient_id, subject, message)
+    puts self.class.post('/messages', body: { "user_id": @user_data["id"], "recipient_id": recipient_id, "subject": subject, "stripped-text": message }, headers: { "authorization" => @auth_token })
+  end
+
 end
 
 class InvalidError < StandardError
